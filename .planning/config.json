@@ -1,0 +1,35 @@
+{
+  "project": "triagemvirtual",
+  "version": "1.0.0",
+  "milestone": "v1",
+  "workflow": {
+    "mode": "guided",
+    "depth": "thorough",
+    "parallelization": true,
+    "auto_commit": true,
+    "verification": true
+  },
+  "agents": {
+    "profile": "quality",
+    "research": true,
+    "planning": true,
+    "execution": true,
+    "verification": true
+  },
+  "conventions": {
+    "language": "pt-BR",
+    "code_language": "en",
+    "commit_language": "en",
+    "docs_language": "pt-BR"
+  },
+  "tech_stack": {
+    "framework": "next.js",
+    "framework_version": "16.1.6",
+    "language": "typescript",
+    "styling": "tailwindcss-4",
+    "database": "supabase",
+    "auth": "supabase-auth",
+    "ai": "flexible-llm",
+    "voice": "webrtc"
+  }
+}
