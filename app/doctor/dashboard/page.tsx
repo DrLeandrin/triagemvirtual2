@@ -81,8 +81,8 @@ export default async function DoctorDashboard() {
             >
               <div className="flex items-start justify-between gap-4">
                 <div className="space-y-1 min-w-0">
-                  <div className="flex items-center gap-3">
-                    <span className="font-semibold text-text-primary">
+                  <div className="flex items-center gap-3 flex-wrap">
+                    <span className="font-semibold text-text-primary truncate max-w-[200px]">
                       {c.patients?.full_name ?? 'Paciente'}
                     </span>
                     <UrgencyBadge urgency={c.urgency} />

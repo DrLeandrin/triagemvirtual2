@@ -13,6 +13,15 @@ export async function proxy(request: NextRequest) {
 
   console.log(`[proxy] ${pathname} | user: ${user?.email ?? 'none'}`)
 
+  // Helper: redirect that preserves refreshed session cookies
+  const safeRedirect = (path: string) => {
+    const response = NextResponse.redirect(new URL(path, request.url))
+    supabaseResponse.cookies.getAll().forEach((cookie) => {
+      response.cookies.set(cookie.name, cookie.value)
+    })
+    return response
+  }
+
   // Public routes - no protection needed
   const publicRoutes = ['/login', '/signup', '/auth/callback']
   const isPublicRoute = publicRoutes.some(route => pathname.startsWith(route))
@@ -45,26 +54,26 @@ export async function proxy(request: NextRequest) {
   // Root path - redirect based on role
   if (pathname === '/') {
     if (!user) {
-      return NextResponse.redirect(new URL('/login', request.url))
+      return safeRedirect('/login')
     }
 
     const role = await getUserRole()
     if (role === 'doctor') {
-      return NextResponse.redirect(new URL('/doctor/dashboard', request.url))
+      return safeRedirect('/doctor/dashboard')
     }
-    return NextResponse.redirect(new URL('/patient/dashboard', request.url))
+    return safeRedirect('/patient/dashboard')
   }
 
   // Patient routes - patients only
   if (pathname.startsWith('/patient')) {
     if (!user) {
-      return NextResponse.redirect(new URL('/login', request.url))
+      return safeRedirect('/login')
     }
 
     const role = await getUserRole()
     if (role === 'doctor') {
       // Doctors should not access patient area
-      return NextResponse.redirect(new URL('/doctor/dashboard', request.url))
+      return safeRedirect('/doctor/dashboard')
     }
 
     // Consent gate — skip for consent pages themselves
@@ -81,7 +90,7 @@ export async function proxy(request: NextRequest) {
         .maybeSingle()
 
       if (!consent) {
-        return NextResponse.redirect(new URL('/patient/consent', request.url))
+        return safeRedirect('/patient/consent')
       }
     }
 
@@ -91,20 +100,20 @@ export async function proxy(request: NextRequest) {
   // Doctor routes - doctors only
   if (pathname.startsWith('/doctor')) {
     if (!user) {
-      return NextResponse.redirect(new URL('/login', request.url))
+      return safeRedirect('/login')
     }
 
     const role = await getUserRole()
     if (role !== 'doctor') {
       // Patients cannot access doctor area
-      return NextResponse.redirect(new URL('/patient/dashboard', request.url))
+      return safeRedirect('/patient/dashboard')
     }
     return supabaseResponse
   }
 
   // All other routes - require authentication
   if (!user) {
-    return NextResponse.redirect(new URL('/login', request.url))
+    return safeRedirect('/login')
   }
 
   return supabaseResponse

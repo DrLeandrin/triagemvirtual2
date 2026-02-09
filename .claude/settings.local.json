@@ -12,8 +12,14 @@
       "Bash(npm install:*)",
       "Bash(npm run lint:*)",
       "Bash(npx eslint:*)",
-      "Bash(npx tsc:*)",
-      "Bash(npx next lint)"
+      "Bash(ls \"c:\\\\Users\\\\leand\\\\Documents\\\\Porjetos\\\\triagemvirtual\\\\components\\\\doctor\"\" 2>nul || echo \"EMPTY \")",
+      "WebFetch(domain:github.com)",
+      "WebFetch(domain:raw.githubusercontent.com)",
+      "WebFetch(domain:www.webfuse.com)",
+      "Bash(curl:*)",
+      "Bash(python3:*)",
+      "WebFetch(domain:neon.com)",
+      "Bash(node -e:*)"
     ]
   }
 }

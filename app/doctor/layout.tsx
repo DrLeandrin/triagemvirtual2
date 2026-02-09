@@ -8,7 +8,7 @@ export default function DoctorLayout({
   return (
     <div className="flex min-h-screen">
       <DoctorSidebar />
-      <main className="flex-1 px-8 py-8 bg-surface-secondary min-h-screen">
+      <main className="flex-1 min-w-0 overflow-x-clip px-8 py-8 bg-surface-secondary min-h-screen">
         {children}
       </main>
     </div>

@@ -92,9 +92,7 @@ as $$
   declare
     user_role public.app_role;
   begin
-    select raw_user_meta_data->>'user_role' into user_role
-    from auth.users
-    where id = auth.uid();
+    select (auth.jwt() ->> 'user_role')::public.app_role into user_role;
 
     return user_role = requested_role;
   end;

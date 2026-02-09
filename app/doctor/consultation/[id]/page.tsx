@@ -43,7 +43,7 @@ export default async function ConsultationDetailPage({
   const c = consultation as ConsultationWithPatient
 
   return (
-    <div className="space-y-6 max-w-4xl">
+    <div className="space-y-6 max-w-4xl break-words">
       {/* Header */}
       <div className="flex items-center justify-between">
         <Link
@@ -91,7 +91,7 @@ export default async function ConsultationDetailPage({
           {/* General summary */}
           <div className="bg-surface border border-border rounded-lg p-5 space-y-2">
             <h2 className="text-lg font-semibold text-text-primary">Resumo Geral</h2>
-            <p className="text-text-secondary">{c.summary.resumo_geral}</p>
+            <p className="text-text-secondary whitespace-pre-line leading-relaxed">{c.summary.resumo_geral}</p>
             {c.summary.queixa_principal && (
               <p className="text-sm text-text-muted">
                 <span className="font-medium">Queixa principal:</span> {c.summary.queixa_principal}
