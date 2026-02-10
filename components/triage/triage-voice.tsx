@@ -31,6 +31,7 @@ export function TriageVoice({ patientName }: { patientName: string }) {
   const [triageState, setTriageState] = useState<TriageState>('idle')
   const [processResult, setProcessResult] = useState<ProcessResult | null>(null)
   const [micError, setMicError] = useState<string | null>(null)
+  const [disconnectError, setDisconnectError] = useState<string | null>(null)
   const transcriptEndRef = useRef<HTMLDivElement>(null)
   const startingRef = useRef(false)
 
@@ -54,7 +55,22 @@ export function TriageVoice({ patientName }: { patientName: string }) {
     onDisconnect: (details) => {
       console.log('[Triage] Disconnected:', JSON.stringify(details, null, 2))
       startingRef.current = false
-      setConnectionState('idle')
+
+      if (details?.reason === 'error') {
+        const msg = (details?.message as string) || ''
+        if (msg.toLowerCase().includes('quota')) {
+          setDisconnectError(
+            'O servico de voz esta temporariamente indisponivel (limite de uso atingido). Tente novamente mais tarde.'
+          )
+        } else {
+          setDisconnectError(
+            `Conexao interrompida inesperadamente: ${msg || 'erro desconhecido'}`
+          )
+        }
+        setConnectionState('error')
+      } else {
+        setConnectionState('idle')
+      }
     },
     onError: (message, context) => {
       console.error('[Triage] Error:', message, context)
@@ -74,6 +90,7 @@ export function TriageVoice({ patientName }: { patientName: string }) {
     startingRef.current = true
 
     setMicError(null)
+    setDisconnectError(null)
     setConnectionState('requesting-mic')
     setTriageState('idle')
     setProcessResult(null)
@@ -263,7 +280,7 @@ export function TriageVoice({ patientName }: { patientName: string }) {
       {connectionState === 'error' && !micError && (
         <div className="bg-danger/10 border border-danger/30 rounded-lg p-4">
           <p className="text-danger text-sm">
-            Ocorreu um erro na conexao. Tente novamente.
+            {disconnectError || 'Ocorreu um erro na conexao. Tente novamente.'}
           </p>
         </div>
       )}
