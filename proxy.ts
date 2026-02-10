@@ -81,7 +81,7 @@ export async function proxy(request: NextRequest) {
     const needsConsent = !consentExempt.some(route => pathname.startsWith(route))
 
     if (needsConsent) {
-      const { data: consent } = await supabase
+      const { data: consent, error: consentError } = await supabase
         .from('consent_records')
         .select('id')
         .eq('user_id', user.id)
@@ -89,7 +89,10 @@ export async function proxy(request: NextRequest) {
         .limit(1)
         .maybeSingle()
 
-      if (!consent) {
+      if (consentError) {
+        console.error('[proxy] consent check failed:', consentError.message)
+        // Fail-open: allow access when the check fails to avoid infinite redirect loop
+      } else if (!consent) {
         return safeRedirect('/patient/consent')
       }
     }

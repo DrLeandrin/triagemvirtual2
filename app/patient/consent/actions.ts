@@ -2,6 +2,7 @@
 
 import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
+import { revalidatePath } from 'next/cache'
 import { headers } from 'next/headers'
 import { createHash } from 'crypto'
 
@@ -73,8 +74,11 @@ export async function recordConsent(
   })
 
   if (error) {
+    console.error('[consent] INSERT failed:', error.message, 'user:', user.id)
     return { error: 'Erro ao registrar consentimento. Tente novamente.' }
   }
 
+  console.log('[consent] INSERT success for user:', user.id)
+  revalidatePath('/patient')
   redirect('/patient/dashboard')
 }
